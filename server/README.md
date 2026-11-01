@@ -43,7 +43,7 @@ nano .env
 
 | 参数                       | 默认值                   | 说明                 |
 | -------------------------- | ------------------------ | -------------------- |
-| `API_BASE_URL`             | `https://gksx.xnscu.com` | 云端 API 地址        |
+| `API_BASE_URL`             | `https://openmath.toreal.site` | 云端 API 地址        |
 | `BATCH_SIZE`               | `50`                     | 每批获取的题目数量   |
 | `CONCURRENCY`              | `5`                      | 并发处理数量         |
 | `INITIAL_DELAY_MS`         | `1000`                   | 初始调用间隔（毫秒） |
@@ -77,7 +77,7 @@ AIzaSyBxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx3
 cd ..
 
 # 运行迁移
-wrangler d1 execute gksx --file=migrations/0004_api_key_stats.sql --remote
+wrangler d1 execute openmath --file=migrations/0004_api_key_stats.sql --remote
 ```
 
 ### 5. 启动服务
@@ -211,9 +211,9 @@ import { ApiKeyStatsPage } from "./components/ApiKeyStatsPage";
 
 ```
 ╔════════════════════════════════════════════════════════════════╗
-║            GKSX Pro Analysis Server                            ║
+║            OpenMath Pro Analysis Server                        ║
 ║────────────────────────────────────────────────────────────────║
-║  API Base:     https://gksx.xnscu.com                          ║
+║  API Base:     https://openmath.toreal.site                    ║
 ║  Batch Size:   50                                              ║
 ║  Concurrency:  5                                               ║
 ║  Model:        gemini-3-pro-preview                            ║

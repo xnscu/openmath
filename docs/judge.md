@@ -2,13 +2,13 @@
 
 本任务不需要工作区里的任何代码，只调用下面的 HTTP 接口。不要阅读工作区文件，不要创建分支或提交。
 
-目标：仲裁 gksx 题库中独立解答与 Gemini Pro 答案不一致的题目。这些题已由自动分诊判定为存在分歧，需要逐题深入验算。
+目标：仲裁 openmath 题库中独立解答与 Gemini Pro 答案不一致的题目。这些题已由自动分诊判定为存在分歧，需要逐题深入验算。
 
 第零步 —— 计时
 最开始运行 `date -u +%Y-%m-%dT%H:%M:%SZ`，记住这个开始时间戳，最后的报告要用。
 
 第一步 —— 取仲裁队列
-curl -s -X POST https://gksx.xnscu.com/api/claude-review/pending \
+curl -s -X POST https://openmath.toreal.site/api/claude-review/pending \
  -H 'Content-Type: application/json' \
  -d '{"limit": 8, "stage": "arbitrate"}'
 
@@ -21,14 +21,14 @@ curl -s -X POST https://gksx.xnscu.com/api/claude-review/pending \
 对每一道题：
 
 1. 获取并转录题目（按已验证流程，不要走捷径）：
-   串行下载：curl -s --retry 3 --retry-delay 2 -o /tmp/q*<exam_id前6位>*<question_id>.png https://r2-gksx.xnscu.com/<data_url>
+   串行下载：curl -s --retry 3 --retry-delay 2 -o /tmp/q*<exam_id前6位>*<question_id>.png https://openmath.toreal.site/api/r2/<data_url>
    （禁止并行 curl，会 DNS 失败 exit 6；禁止 shell 循环拼 URL，zsh 不分词会拼错文件名；文件名必须带 exam_id 前缀防覆盖；下载后用 file 命令确认是图片而非 HTML。）
    用 Read 读图；若报 Unable to decode image data，先 sips -s format png 转换再 Read。Read 图片返回 CDN URL 时，用视觉分析工具 analyze_image（imageSource 传该 URL）逐字转录题目（公式用 LaTeX，禁止凭记忆补全），转录后做自洽性检查，可疑则换 prompt 或放大裁剪重读核验；无法确认题干则该题判 unverifiable 并说明。
 2. 先不看两份解答，自己从头独立算一遍。算完再对照。
 3. 定位分歧的确切来源。分歧可能只是等价形式的不同写法
    （如 1/2 与 0.5、[1,3] 与 1≤x≤3），这种情况判 correct。
 4. 写回：
-   curl -s -X PUT https://gksx.xnscu.com/api/claude-review/review \
+   curl -s -X PUT https://openmath.toreal.site/api/claude-review/review \
     -H 'Content-Type: application/json' \
     -d '{
    "exam_id": "...", "question_id": "...",
@@ -56,6 +56,6 @@ confidence 低于 0.7 时判 unverifiable，留给人工复核。
 
 第三步 —— 报告
 再次运行 `date -u +%Y-%m-%dT%H:%M:%SZ` 取结束时间。
-curl -s https://gksx.xnscu.com/api/claude-review/stats
+curl -s https://openmath.toreal.site/api/claude-review/stats
 报告开头先给计时：开始时间（UTC）、结束时间（UTC）、总耗时（分钟）、每题耗时（分钟）、平均每题耗时。
 然后输出各 verdict 的分布，并逐条列出本次判定为 incorrect 的题目及错因。

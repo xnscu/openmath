@@ -39,8 +39,8 @@ function parseArgs() {
 const args = parseArgs();
 
 const CONFIG = {
-  API_BASE_URL: args.API_BASE_URL || process.env.API_BASE_URL || 'https://gksx.xnscu.com',
-  CDN_URL: args.CDN_URL || process.env.CDN_URL || 'https://r2-gksx.xnscu.com',
+  API_BASE_URL: args.API_BASE_URL || process.env.API_BASE_URL || 'https://openmath.toreal.site',
+  CDN_URL: args.CDN_URL || process.env.CDN_URL || 'https://openmath.toreal.site/api/r2',
   CONCURRENCY: parseInt(args.CONCURRENCY || 10),
   TARGET_WIDTH: parseInt(args.TARGET_WIDTH || 0),
   TASK_ID: 'image-normalization'

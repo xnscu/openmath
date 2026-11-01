@@ -21,7 +21,7 @@
 
 ## API
 
-Base: `https://openmath.toreal.site/api/claude-review` (旧域名: `https://gksx.xnscu.com/api/claude-review`)
+Base: `https://openmath.toreal.site/api/claude-review`
 
 ```
 POST /pending    { limit, stage: 'solve'|'extract'|'arbitrate', min_difficulty? }
@@ -32,7 +32,7 @@ GET  /stats
 GET  /timeline   { mode: 'day'|'week'|'month' }
 ```
 
-题目图片：`data_url` 是 SHA-256 hash，从 `https://openmath.toreal.site/api/r2/<hash>` 或旧地址 `https://r2-gksx.xnscu.com/<hash>` 取。
+题目图片：`data_url` 是 SHA-256 hash，从 `https://openmath.toreal.site/api/r2/<hash>` 取。
 
 ## Routine A — 解答 + 分诊
 
@@ -175,7 +175,7 @@ CLI `/schedule` 三个入口都能建，写的是同一个云端账户。Desktop
 
 ### 必须改网络白名单
 
-云环境默认只放行常见包管理器和云厂商域名。`gksx.xnscu.com` 与 `r2-gksx.xnscu.com`
+云环境默认只放行常见包管理器和云厂商域名。`openmath.toreal.site` 与 `r2-gksx.xnscu.com`
 都不在其中，不改的话 routine 里每一个 curl 都会返回 `403 x-deny-reason: host_not_allowed`。
 
 白名单挂在**环境**上，不在 routine 上 —— 创建 routine 的 API 只接受一个 `environment_id`。

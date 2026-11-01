@@ -2,17 +2,17 @@
 
 本任务不需要工作区里的任何代码，只调用下面的 HTTP 接口。不要阅读工作区文件，不要创建分支或提交。
 
-目标：为 gksx 题库中每份卷子的最后两道压轴解答题生成高质量独立解答。压轴题最难，用最高推理深度逐题攻。本任务只负责解答（写 claude_analysis 字段），不做对账分诊 —— 分诊由每天凌晨 4 点的非压轴题分诊任务统一处理。
+目标：为 openmath 题库中每份卷子的最后两道压轴解答题生成高质量独立解答。压轴题最难，用最高推理深度逐题攻。本任务只负责解答（写 claude_analysis 字段），不做对账分诊 —— 分诊由每天凌晨 4 点的非压轴题分诊任务统一处理。
 
 第零步 —— 计时
 最开始运行 `date -u +%Y-%m-%dT%H:%M:%SZ`，记住这个开始时间戳，最后的报告要用。
 
 准备 —— 知识点目录
-curl -s https://gksx.xnscu.com/api/claude-review/knowledge
+curl -s https://openmath.toreal.site/api/claude-review/knowledge
 后续打 tags 时从这份目录选，不要自造。
 
 第一步 —— 取压轴题
-curl -s -X POST https://gksx.xnscu.com/api/claude-review/pending \
+curl -s -X POST https://openmath.toreal.site/api/claude-review/pending \
  -H 'Content-Type: application/json' \
  -d '{"limit": 6, "stage": "solve", "question_type": "解答", "exam_position": "final"}'
 exam_position=final 表示每份卷子按题号最大的两道解答题（即压轴）。
@@ -24,7 +24,7 @@ exam_position=final 表示每份卷子按题号最大的两道解答题（即压
 对每一道题依次执行 A→E。图片获取与转录按下面的已验证流程做，不要走捷径（曾有批次因并行下载、shell 循环拼 URL、直接读 JPEG 而失败）。
 
 A. 下载题目图片（串行，一次一张）：
-curl -s --retry 3 --retry-delay 2 -o /tmp/q*<exam_id前6位>*<question_id>.png https://r2-gksx.xnscu.com/<data_url>
+curl -s --retry 3 --retry-delay 2 -o /tmp/q*<exam_id前6位>*<question_id>.png https://openmath.toreal.site/api/r2/<data_url>
 
 - 文件名必须带 exam_id 前缀：不同卷子的 question_id 会重复，只用 question_id 命名会互相覆盖。
 - 禁止并行 curl（会 DNS 解析失败 exit 6）；禁止用 shell 循环 + 变量拼 URL（zsh 不做分词，会生成带空格的错文件名），逐题写显式 curl 命令。
@@ -46,7 +46,7 @@ D. 独立解答：
 
 E. 写回与计时：
 payload 较长，先写入临时 JSON 文件再提交（避免命令行引号转义出错）：
-curl -s -X PUT https://gksx.xnscu.com/api/claude-review/analysis \
+curl -s -X PUT https://openmath.toreal.site/api/claude-review/analysis \
  -H 'Content-Type: application/json' --data-binary @/tmp/payload_q.json
 payload 结构：
 {"exam_id":"...","question_id":"...",

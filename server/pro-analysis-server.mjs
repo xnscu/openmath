@@ -86,8 +86,8 @@ const getConfig = (key, defaultValue, parser = v => v) => {
 };
 
 const CONFIG = {
-  API_BASE_URL: getConfig('API_BASE_URL', 'https://gksx.xnscu.com'),
-  CDN_URL: getConfig('CDN_URL', 'https://r2-gksx.xnscu.com'),
+  API_BASE_URL: getConfig('API_BASE_URL', 'https://openmath.toreal.site'),
+  CDN_URL: getConfig('CDN_URL', 'https://openmath.toreal.site/api/r2'),
   BATCH_SIZE: getConfig('BATCH_SIZE', 50, parseInt),
   CONCURRENCY: getConfig('CONCURRENCY', 5, parseInt),
   INITIAL_DELAY_MS: getConfig('INITIAL_DELAY_MS', 1000, parseInt),

@@ -16,7 +16,7 @@ if ! command -v wrangler &> /dev/null; then
 fi
 
 # Database name from wrangler.toml
-DB_NAME="gksx"
+DB_NAME="openmath"
 MIGRATION_FILE="./migrations/001_questions_composite_pk.sql"
 
 echo "📊 Database: $DB_NAME"

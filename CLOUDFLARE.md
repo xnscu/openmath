@@ -178,7 +178,7 @@ interface ExamRecord {
 ```env
 # Vite 前端环境变量
 VITE_API_URL=/api        # API 基础 URL
-VITE_CDN_URL=https://r2-gksx.xnscu.com/  # CDN 域名（生产环境图片URL，可选）
+# VITE_CDN_URL=https://openmath.toreal.site/api/r2/  # CDN 域名（生产环境图片URL，可选）
 
 # Cloudflare Worker 环境变量（在 wrangler.toml 中配置）
 ENVIRONMENT=production
