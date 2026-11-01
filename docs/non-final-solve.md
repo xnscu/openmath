@@ -14,7 +14,7 @@ curl -s https://openmath.toreal.site/api/claude-review/knowledge
 第一步 —— 取题
 curl -s -X POST https://openmath.toreal.site/api/claude-review/pending \
  -H 'Content-Type: application/json' \
- -d '{"limit": 15, "stage": "solve", "min_difficulty": 4, "question_type": "解答", "exam_position": "non_final"}'
+ -d '{"limit": 30, "stage": "solve", "min_difficulty": 4, "question_type": "解答", "exam_position": "non_final"}'
 
 如果这个 curl 返回 403 或 host_not_allowed，说明网络白名单没放行 openmath.toreal.site，立即停止并在报告中原文输出错误响应和 HTTP 状态码，不要重试。
 若 count 为 0，直接输出报告（含耗时）并结束，不要放宽筛选条件。

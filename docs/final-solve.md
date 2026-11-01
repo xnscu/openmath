@@ -14,7 +14,7 @@ curl -s https://openmath.toreal.site/api/claude-review/knowledge
 第一步 —— 取压轴题
 curl -s -X POST https://openmath.toreal.site/api/claude-review/pending \
  -H 'Content-Type: application/json' \
- -d '{"limit": 6, "stage": "solve", "question_type": "解答", "exam_position": "final"}'
+ -d '{"limit": 10, "stage": "solve", "question_type": "解答", "exam_position": "final"}'
 exam_position=final 表示每份卷子按题号最大的两道解答题（即压轴）。
 若返回 403 或 host_not_allowed，立即停止并原文输出错误和 HTTP 状态码，不要重试。
 若 count 为 0，输出报告（含耗时）并结束。

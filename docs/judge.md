@@ -10,7 +10,7 @@
 第一步 —— 取仲裁队列
 curl -s -X POST https://openmath.toreal.site/api/claude-review/pending \
  -H 'Content-Type: application/json' \
- -d '{"limit": 8, "stage": "arbitrate"}'
+ -d '{"limit": 10, "stage": "arbitrate"}'
 
 如果这个 curl 返回 403 或 host_not_allowed，立即停止，在报告中原文输出错误响应和 HTTP 状态码，不要重试。
 
