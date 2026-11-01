@@ -2,6 +2,7 @@ name = "openmath"
 main = "src/worker.mjs"
 compatibility_date = "2024-09-23"
 compatibility_flags = [ "nodejs_compat" ]
+account_id = "7a1581384dc3aa852ba24ec9d57fec0d"
 
 # Routes configuration
 routes = [
