@@ -27,3 +27,4 @@ pnpm-lock.yaml
 .wrangler
 package-lock.json
 keys.txt
+.cf-account
