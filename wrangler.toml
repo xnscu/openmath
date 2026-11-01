@@ -1,18 +1,18 @@
-name = "gksx"
+name = "openmath"
 main = "src/worker.mjs"
 compatibility_date = "2024-09-23"
 compatibility_flags = [ "nodejs_compat" ]
 
 # Routes configuration
 routes = [
-  { pattern = "gksx.xnscu.com", zone_name = "xnscu.com", custom_domain = true }
+  { pattern = "openmath.toreal.site", zone_name = "toreal.site", custom_domain = true }
 ]
 
 # D1 Database binding
 [[d1_databases]]
 binding = "DB"
-database_name = "gksx"
-database_id = "3a16e8da-382f-420e-aafb-9ba983c480cb"
+database_name = "openmath"
+database_id = "cd83be6d-2e5c-4b6c-9c94-5fbbdb8fe944"
 
 # Static assets binding (for Vite plugin)
 [assets]
@@ -26,7 +26,7 @@ enabled = true
 # R2 Storage binding (for image storage)
 [[r2_buckets]]
 binding = "R2"
-bucket_name = "gksx"
+bucket_name = "openmath"
 #
 # 本地开发默认使用本地模拟 R2（数据落在 .wrangler/state/）。
 # 如果你想让本地开发直接读写“远程”R2，再开启下面这一行：

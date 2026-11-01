@@ -21,7 +21,7 @@
 
 ## API
 
-Base: `https://gksx.xnscu.com/api/claude-review`
+Base: `https://openmath.toreal.site/api/claude-review` (旧域名: `https://gksx.xnscu.com/api/claude-review`)
 
 ```
 POST /pending    { limit, stage: 'solve'|'extract'|'arbitrate', min_difficulty? }
@@ -29,9 +29,10 @@ PUT  /analysis   { exam_id, question_id, claude_analysis, final_answers: string[
 POST /triage     { gemini_answers: { "exam_id:question_id": string[] } }
 PUT  /review     { exam_id, question_id, claude_review }
 GET  /stats
+GET  /timeline   { mode: 'day'|'week'|'month' }
 ```
 
-题目图片：`data_url` 是 SHA-256 hash，从 `https://r2-gksx.xnscu.com/<hash>` 取。
+题目图片：`data_url` 是 SHA-256 hash，从 `https://openmath.toreal.site/api/r2/<hash>` 或旧地址 `https://r2-gksx.xnscu.com/<hash>` 取。
 
 ## Routine A — 解答 + 分诊
 
@@ -42,10 +43,10 @@ Routine 的 cron 一律按 UTC 解释，本地时间要减 8 小时。
 你是一个自动化任务，运行在 Claude Code 云端 session 中，没有人会回答你的提问。
 遇到无法判断的情况，跳过该题并在最终报告中说明，不要停下来等待确认。
 
-目标：为 gksx 题库中尚无 Claude 解答的高难度题目生成独立解答，并与 Gemini Pro 的答案对账。
+目标：为 openmath 题库中尚无 Claude 解答的高难度题目生成独立解答，并与 Gemini Pro 的答案对账。
 
 第一步 —— 取题
-curl -s -X POST https://gksx.xnscu.com/api/claude-review/pending \
+curl -s -X POST https://openmath.toreal.site/api/claude-review/pending \
   -H 'Content-Type: application/json' \
   -d '{"limit": 15, "stage": "solve", "min_difficulty": 4, "question_type": "解答"}'
 
@@ -57,13 +58,13 @@ question_type 按前缀匹配，"解答" 同时命中库里的 "解答" 和 "解
 
 第二步 —— 逐题独立解答
 对每一道题：
-  1. curl -s -o /tmp/q.png https://r2-gksx.xnscu.com/<data_url>
+  1. curl -s -o /tmp/q.png https://openmath.toreal.site/api/r2/<data_url>
      然后用 Read 工具读取 /tmp/q.png。
   2. 这是中国大陆高考数学题。独立解答，按高考评分标准书写步骤。
      重点检查两件事：分类讨论是否完备，每一步代数变形是否正确。
      不要去查询这道题的 pro_analysis —— 独立性是整套流程的全部意义。
   3. 写回：
-     curl -s -X PUT https://gksx.xnscu.com/api/claude-review/analysis \
+     curl -s -X PUT https://openmath.toreal.site/api/claude-review/analysis \
        -H 'Content-Type: application/json' \
        -d '{
          "exam_id": "...", "question_id": "...",
@@ -78,7 +79,7 @@ question_type 按前缀匹配，"解答" 同时命中库里的 "解答" 和 "解
      图片不可读或题目残缺时跳过该题，不要写入。
 
 第三步 —— 提取 Gemini 的最终答案
-curl -s -X POST https://gksx.xnscu.com/api/claude-review/pending \
+curl -s -X POST https://openmath.toreal.site/api/claude-review/pending \
   -H 'Content-Type: application/json' \
   -d '{"limit": 50, "stage": "extract"}'
 
@@ -87,7 +88,7 @@ curl -s -X POST https://gksx.xnscu.com/api/claude-review/pending \
 这一步只做提取，不做任何对错判断 —— 照抄 Gemini 写的结论，哪怕你认为它是错的。
 
 第四步 —— 分诊
-curl -s -X POST https://gksx.xnscu.com/api/claude-review/triage \
+curl -s -X POST https://openmath.toreal.site/api/claude-review/triage \
   -H 'Content-Type: application/json' \
   -d '{"gemini_answers": {"<key>": ["答案1", "答案2"]}}'
 key 用第三步响应里的 key 字段（形如 "exam_id:question_id"）。
@@ -108,11 +109,11 @@ ultrathink
 
 你是一个自动化任务，运行在 Claude Code 云端 session 中，没有人会回答你的提问。
 
-目标：仲裁 gksx 题库中 Claude 与 Gemini Pro 答案不一致的题目。这些题已由自动分诊
+目标：仲裁 openmath 题库中 Claude 与 Gemini Pro 答案不一致的题目。这些题已由自动分诊
 判定为存在分歧，需要逐题深入验算。
 
 第一步 —— 取仲裁队列
-curl -s -X POST https://gksx.xnscu.com/api/claude-review/pending \
+curl -s -X POST https://openmath.toreal.site/api/claude-review/pending \
   -H 'Content-Type: application/json' \
   -d '{"limit": 8, "stage": "arbitrate"}'
 
@@ -120,12 +121,12 @@ curl -s -X POST https://gksx.xnscu.com/api/claude-review/pending \
 
 第二步 —— 逐题仲裁
 对每一道题：
-  1. curl -s -o /tmp/q.png https://r2-gksx.xnscu.com/<data_url>，用 Read 读取。
+  1. curl -s -o /tmp/q.png https://openmath.toreal.site/api/r2/<data_url>，用 Read 读取。
   2. 先不看两份解答，自己从头独立算一遍。算完再对照。
   3. 定位分歧的确切来源。分歧可能只是等价形式的不同写法
      （如 1/2 与 0.5、[1,3] 与 1≤x≤3），这种情况判 correct。
   4. 写回：
-     curl -s -X PUT https://gksx.xnscu.com/api/claude-review/review \
+     curl -s -X PUT https://openmath.toreal.site/api/claude-review/review \
        -H 'Content-Type: application/json' \
        -d '{
          "exam_id": "...", "question_id": "...",
@@ -151,7 +152,7 @@ verdict 语义：
 confidence 低于 0.7 时判 unverifiable，留给人工复核。
 
 第三步 —— 报告
-curl -s https://gksx.xnscu.com/api/claude-review/stats
+curl -s https://openmath.toreal.site/api/claude-review/stats
 输出各 verdict 的分布，并逐条列出本次判定为 incorrect 的题目及错因。
 ```
 

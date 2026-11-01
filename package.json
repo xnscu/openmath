@@ -1,5 +1,5 @@
 {
-  "name": "math-exam-splitter",
+  "name": "openmath",
   "version": "1.100.0",
   "private": true,
   "type": "module",
@@ -27,9 +27,9 @@
     "deploy": "vite build && wrangler deploy",
     "postdeploy": "yarn commit",
     "commit": "git add . ; git commit -m 'chore: update package version' ; git push",
-    "db": "wrangler d1 execute gksx --yes --file=migrations/tmp.sql",
-    "db:init:remote": "wrangler d1 execute gksx --file=schema.sql --remote",
-    "db:init": "wrangler d1 execute gksx --local --file=schema.sql",
+    "db": "wrangler d1 execute openmath --yes --file=migrations/tmp.sql",
+    "db:init:remote": "wrangler d1 execute openmath --file=schema.sql --remote",
+    "db:init": "wrangler d1 execute openmath --local --file=schema.sql",
     "db:sync": "bash scripts/sync-db.sh"
   },
   "devDependencies": {

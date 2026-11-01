@@ -6,6 +6,9 @@ import { Hono } from 'hono';
 
 const r2Routes = new Hono();
 
+// Fallback legacy R2 bucket URL for already existing images
+const LEGACY_R2_URL = 'https://r2-gksx.xnscu.com';
+
 // HEAD /:hash - Check if image exists in R2
 r2Routes.on('HEAD', '/:hash', async (c) => {
   const r2 = c.env.R2;
@@ -26,6 +29,21 @@ r2Routes.on('HEAD', '/:hash', async (c) => {
         },
       });
     }
+
+    // Fallback: check legacy R2 storage
+    try {
+      const legacyRes = await fetch(`${LEGACY_R2_URL}/${hash}`, { method: 'HEAD' });
+      if (legacyRes.ok) {
+        return new Response(null, {
+          status: 200,
+          headers: {
+            'Content-Type': legacyRes.headers.get('Content-Type') || 'image/png',
+            'Content-Length': legacyRes.headers.get('Content-Length') || '0',
+          },
+        });
+      }
+    } catch {}
+
     return new Response(null, { status: 404 });
   } catch (error) {
     return c.json({ error: `R2 check failed: ${error.message}` }, 500);
@@ -43,24 +61,39 @@ r2Routes.get('/:hash', async (c) => {
 
   try {
     const object = await r2.get(hash);
-    if (!object) {
-      return c.json({ error: 'Image not found' }, 404);
+    if (object) {
+      return new Response(object.body, {
+        status: 200,
+        headers: {
+          'Content-Type': object.httpMetadata?.contentType || 'image/png',
+          'Content-Length': object.size.toString(),
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        },
+      });
     }
 
-    return new Response(object.body, {
-      status: 200,
-      headers: {
-        'Content-Type': object.httpMetadata?.contentType || 'image/png',
-        'Content-Length': object.size.toString(),
-        'Cache-Control': 'public, max-age=31536000, immutable',
-      },
-    });
+    // Fallback: fetch from legacy R2 storage
+    try {
+      const legacyRes = await fetch(`${LEGACY_R2_URL}/${hash}`);
+      if (legacyRes.ok) {
+        return new Response(legacyRes.body, {
+          status: 200,
+          headers: {
+            'Content-Type': legacyRes.headers.get('Content-Type') || 'image/png',
+            'Content-Length': legacyRes.headers.get('Content-Length') || '0',
+            'Cache-Control': 'public, max-age=31536000, immutable',
+          },
+        });
+      }
+    } catch {}
+
+    return c.json({ error: 'Image not found' }, 404);
   } catch (error) {
     return c.json({ error: `R2 get failed: ${error.message}` }, 500);
   }
 });
 
-// PUT /:hash - Upload image to R2
+// PUT /:hash - Upload image to R2 (always saves to new torealsite R2 bucket)
 r2Routes.put('/:hash', async (c) => {
   const r2 = c.env.R2;
   const hash = c.req.param('hash');
@@ -70,7 +103,7 @@ r2Routes.put('/:hash', async (c) => {
   }
 
   try {
-    // Check if already exists
+    // Check if already exists in new bucket
     const existing = await r2.head(hash);
     if (existing) {
       return c.json({ success: true, hash, existed: true });
@@ -91,7 +124,7 @@ r2Routes.put('/:hash', async (c) => {
   }
 });
 
-// POST /check-batch - Batch check if images exist
+// POST /check-batch - Batch check if images exist (checks both new and legacy)
 r2Routes.post('/check-batch', async (c) => {
   const r2 = c.env.R2;
 
@@ -110,7 +143,14 @@ r2Routes.post('/check-batch', async (c) => {
     // Check each hash in parallel
     const checks = body.hashes.map(async (hash) => {
       const object = await r2.head(hash);
-      return { hash, exists: !!object };
+      if (object) return { hash, exists: true };
+      // Fallback check
+      try {
+        const legacyRes = await fetch(`${LEGACY_R2_URL}/${hash}`, { method: 'HEAD' });
+        return { hash, exists: legacyRes.ok };
+      } catch {
+        return { hash, exists: false };
+      }
     });
 
     const checkResults = await Promise.all(checks);

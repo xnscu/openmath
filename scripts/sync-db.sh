@@ -9,8 +9,8 @@ echo "⚠️  Note: Ensure your local dev server is not writing to the database 
 
 
 # 1. Export remote database
-echo "⏳ Exporting remote database (gksx)..."
-npx wrangler d1 export gksx --remote --output="/tmp/d1_export.sql"
+echo "⏳ Exporting remote database (openmath)..."
+npx wrangler d1 export openmath --remote --output="/tmp/d1_export.sql"
 
 # check if export was successful
 if [ ! -f "/tmp/d1_export.sql" ]; then
