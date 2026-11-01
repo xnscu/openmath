@@ -376,7 +376,7 @@ claudeReviewRoutes.put('/review', async (c) => {
 const TARGET_SET = `
   pro_analysis IS NOT NULL
   AND json_extract(pro_analysis, '$.question_type') LIKE '解答%'
-  AND COALESCE(json_extract(pro_analysis, '$.difficulty'), 1) >= 4
+  AND COALESCE(json_extract(pro_analysis, '$.difficulty'), 1) >= 3
 `;
 
 // GET /knowledge - The knowledge-point taxonomy, as plain text. The solve

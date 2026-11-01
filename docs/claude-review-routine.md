@@ -48,7 +48,7 @@ Routine 的 cron 一律按 UTC 解释，本地时间要减 8 小时。
 第一步 —— 取题
 curl -s -X POST https://openmath.toreal.site/api/claude-review/pending \
   -H 'Content-Type: application/json' \
-  -d '{"limit": 15, "stage": "solve", "min_difficulty": 4, "question_type": "解答"}'
+  -d '{"limit": 15, "stage": "solve", "min_difficulty": 3, "question_type": "解答"}'
 
 question_type 按前缀匹配，"解答" 同时命中库里的 "解答" 和 "解答题" 两种写法。
 响应中每题含 exam_id、question_id、data_url（图片的 SHA-256 hash）、difficulty。

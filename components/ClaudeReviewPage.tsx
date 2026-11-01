@@ -150,16 +150,16 @@ const ProgressBar: React.FC<{ stats: Stats }> = ({ stats }) => {
   const solvedPct = (solved / total) * 100;
   const reviewedPct = (reviewed / total) * 100;
 
-  // At 15 questions per daily run, the remaining work is this many days out.
+  // At 30 questions per daily run, the remaining work is this many days out.
   const remaining = total - solved;
-  const daysLeft = Math.ceil(remaining / 15);
+  const daysLeft = Math.ceil(remaining / 30);
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
       <div className="flex items-baseline justify-between mb-3">
         <h2 className="text-sm font-semibold text-slate-700">
           核查总进度
-          <span className="ml-2 font-normal text-slate-400">难度 ≥4 的解答题</span>
+          <span className="ml-2 font-normal text-slate-400">难度 ≥3 的解答题</span>
         </h2>
         <span className="text-sm text-slate-500 font-medium">
           {solved} / {total}
@@ -186,7 +186,7 @@ const ProgressBar: React.FC<{ stats: Stats }> = ({ stats }) => {
           <span className="inline-block w-2 h-2 rounded-full bg-indigo-600 mr-1.5 align-middle" />
           已核查 {reviewed}
         </span>
-        <span>剩余 {remaining}，按每天 15 道约需 {daysLeft} 天</span>
+        <span>剩余 {remaining}，按每天 30 道约需 {daysLeft} 天</span>
       </div>
 
       <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-100">
